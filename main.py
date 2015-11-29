@@ -16,11 +16,11 @@ Track = namedtuple('Track', ['artist', 'track'])
 
 
 def parse_title(s):
-    val = re.split(' -+ ', s, 1)
-    if len(val) == 2:
-        artist = val[0].strip()
-        track = re.split('\[', val[1], 1)[0].strip()
-        return Track(artist, track)
+    try:
+        artist, title = re.split(' -+ ', s, 1)
+    except ValueError:  # title not found
+        return None
+    return Track(artist.strip(), title.partition('[')[0].strip())
 
 
 def get_subreddit_tracks(subreddit, limit):
