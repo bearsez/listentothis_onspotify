@@ -43,10 +43,11 @@ def generate_spotify_playlist(tracks, playlist_name, username):
     :param username: Spotify username
     """
     sp = spotipy.Spotify()
-    formatted_tracks = [u'artist:"{artist}" track:"{track}"'.format(artist=t.artist, track=t.track) for t in tracks]
+    fmt = u'artist:"{artist}" track:"{track}"'
+    formatted_tracks = (fmt.format(**track._asdict()) for track in tracks)
     search_res = [sp.search(q=t, type='track', limit=1) for t in formatted_tracks]
-    track_ids = [(first(r.get('tracks', {}).get('items', {})) or {}).get('uri') for r in search_res if
-                 r.get('tracks', {}).get('items')]
+    track_ids = [(first(r.get('tracks', {}).get('items', {})) or {}).get('uri')
+                 for r in search_res if r.get('tracks', {}).get('items')]
 
     token = util.prompt_for_user_token(username, scope=scope)
 
